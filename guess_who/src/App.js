@@ -1,36 +1,60 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
 import './App.css';
 import AppHeader from './Header';
 import GameBoard from './GameBoard';
 import CurrentCard from './CurrentCard';
-import { Grid } from 'semantic-ui-react';
+import { Grid, Button } from 'semantic-ui-react';
 
-
+const API = 'http://' + window.location.hostname + ':9000';
+const REFRESH_EVERY_MS = 1000;
 
 class App extends Component {
   constructor() {
     super();
     this.state = {
-      characters: []
+      setChosen: ""
     }
 
+    this.refreshInterval = setInterval(
+      this.isChoiceMade,
+      REFRESH_EVERY_MS
+    );
+
+    this.isChoiceMade();
+  }
+
+  isChoiceMade = e => {
+    fetch(API + '/getImages/getChoice')
+      .then(res => res.text())
+        .then(res => {
+          if (JSON.parse(res).setChosen !== this.state.setChosen) {
+            this.setState({ setChosen: JSON.parse(res).setChosen })
+          }
+          })
+        .catch(err => console.log(err));
+        // console.log(this.state.setChosen);
   }
 
   render() {
     return (
       <>
         <AppHeader/>
+        {this.state.setChosen && (
         <Grid>
           <Grid.Row>
             <Grid.Column width={14}>
-              <GameBoard/>
+              <GameBoard
+                set={this.state.setChosen}/>
             </Grid.Column>
             <Grid.Column width={2}>
-              <CurrentCard/>
+              <CurrentCard
+                set={this.state.setChosen}/>
             </Grid.Column>
           </Grid.Row>
         </Grid>
+      )}  { !this.state.setChosen && (
+        <h1>Choose your character set</h1>
+      )}
       </>
     )
   }

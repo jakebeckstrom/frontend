@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
-import { Grid, Segment, Button, Card, Label, List, Image, Dimmer } from 'semantic-ui-react';
+import { Grid, Segment, Image, Label } from 'semantic-ui-react';
 
-const LOCAL = 'http://localhost:9000/images';
+const API = 'http://' + window.location.hostname + ':9000';
 
 export default class GameBoard extends Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.state = {
       apiResponse: "",
       chars: [],
@@ -24,7 +24,10 @@ export default class GameBoard extends Component {
 
 
   async callAPI() {
-    await fetch("http://localhost:9000/getImages")
+    this.id = 0;
+    console.log("Made API call");
+    console.log(this.props.set);
+    await fetch(API + '/getImages/' + this.props.set)
       .then(res => res.text())
         .then(res => this.setState({ apiResponse: JSON.parse(res) }))
         .catch(err => console.log(err));
@@ -36,7 +39,7 @@ export default class GameBoard extends Component {
       let temp = [];
       let per = 8;
       while (per > 0) {
-        console.log(this.state.apiResponse.images[index]);
+        // console.log(this.state.apiResponse.images[index]);
         temp.push(this.state.apiResponse.images[index]);
         index++;
         per--;
@@ -51,6 +54,7 @@ export default class GameBoard extends Component {
 
 
   componentDidMount() {
+    console.log("Component mounted");
     this.callAPI();
   }
 
@@ -59,7 +63,7 @@ export default class GameBoard extends Component {
   }
 
   getImageURL = name => {
-    return LOCAL + '/' + name;
+    return API + '/' + this.props.set + '/' + name;
   }
 
   handleClick = event => {
@@ -67,21 +71,21 @@ export default class GameBoard extends Component {
     console.log(event.currentTarget.id);
     let i = event.currentTarget.id;
     this.toggled[i] = !this.toggled[i];
-    console.log(this.state.chars);
     if (this.toggled[i]) {
-      event.currentTarget.src = LOCAL + '/' + 'black.png';
+      event.currentTarget.src = API + '/public/black.png';
     } else {
+      console.log(i);
       let j = 0;
       while (i - 8 >= 0) {
         j++;
         i = i -8;
       }
-
-      event.currentTarget.src = LOCAL + '/' + this.state.chars[j][i];
+      // console.log(j);
+      event.currentTarget.src = API + '/' + this.props.set + '/' + this.state.chars[j][i];
     }
   }
 
-  setID(){
+  setID() {
     return this.id++;
   }
 
@@ -91,17 +95,14 @@ export default class GameBoard extends Component {
     const gameTileCol = image => (
 
       <Grid.Column width={2}>
-        <Card>
-          <Card.Content>
+        <Segment>
             <Image
                 id={this.setID()}
                 onClick={this.handleClick}
-                width="150px"
                 src={this.getImageURL(image)}
                  />
-            <Card.Header>{this.formatText(image)}</Card.Header>
-          </Card.Content>
-        </Card>
+            <Label attached='bottom'>{this.formatText(image)}</Label>
+        </Segment>
       </Grid.Column>
     );
 

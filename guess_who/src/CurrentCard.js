@@ -1,11 +1,13 @@
 import React, { Component } from 'react';
 import { Segment, Label, Image } from 'semantic-ui-react';
 
-const LOCAL = 'http://localhost:9000/images';
+const LOCAL = 'http://' + window.location.hostname + ':9000';
+const APIHOST = 'http://' + window.location.hostname + ':9000/getChar';
+
 
 export default class CurrentCard extends Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.state = {
       char: "",
       processed: false
@@ -13,7 +15,7 @@ export default class CurrentCard extends Component {
   }
 
   async callAPI() {
-    await fetch("http://localhost:9000/getChar")
+    await fetch(APIHOST + '/' + this.props.set)
       .then(res => res.text())
         .then(res => this.setState({ char: JSON.parse(res).char }))
         .catch(err => console.log(err));
@@ -30,7 +32,7 @@ export default class CurrentCard extends Component {
 
   getImageURL = name => {
     console.log(name);
-    return LOCAL + '/' + name;
+    return LOCAL + '/' + this.props.set + '/' + name;
   }
 
   formatText = name => {
@@ -47,8 +49,14 @@ export default class CurrentCard extends Component {
         <Label attached='top'>Your Character</Label>
         {this.state.processed && (
           <>
-          <Image src={this.getImageURL(this.state.char)} width='150px'/>
-          <p>{this.formatText(this.state.char)}</p>
+          <Segment>
+              <Image
+                  onClick={this.handleClick}
+                  width="150px"
+                  src={this.getImageURL(this.state.char)}
+                   />
+              <Label attached='bottom'>{this.formatText(this.state.char)}</Label>
+          </Segment>
           </>
         )} {!this.state.processed && (
           <p>Loading</p>
