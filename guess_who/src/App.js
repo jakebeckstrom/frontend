@@ -3,7 +3,7 @@ import './App.css';
 import AppHeader from './Header';
 import GameBoard from './GameBoard';
 import CurrentCard from './CurrentCard';
-import { Grid, Button } from 'semantic-ui-react';
+import { Grid } from 'semantic-ui-react';
 
 const API = 'http://' + window.location.hostname + ':9000';
 const REFRESH_EVERY_MS = 1000;
@@ -23,8 +23,8 @@ class App extends Component {
     this.isChoiceMade();
   }
 
-  isChoiceMade = e => {
-    fetch(API + '/getImages/getChoice')
+  isChoiceMade = async e => {
+    await fetch(API + '/getImages/getChoice')
       .then(res => res.text())
         .then(res => {
           if (JSON.parse(res).setChosen !== this.state.setChosen) {

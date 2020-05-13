@@ -1,25 +1,64 @@
 import React, { Component } from 'react';
-import { Header, Grid, Form, Button } from 'semantic-ui-react';
+import { Header, Grid, Button, Segment } from 'semantic-ui-react';
 
 const API = 'http://' + window.location.hostname + ':9000';
+const REFRESH_EVERY_MS = 1000;
 
 export default class AppHeader extends Component {
   constructor() {
     super();
     this.state = {
-      name: "",
-      submittedName: ""
+      submittedName: "",
+      opponentName: ""
     }
 
     this.choose = this.choose.bind(this);
+
+    this.refreshInterval = setInterval(
+      this.getOpponent,
+      REFRESH_EVERY_MS
+    );
+
+    this.getOpponent();
+  }
+
+  stopAutomaticRefreshing() {
+    clearInterval(this.refreshInterval);
   }
 
   handleChange = (e, { name, value }) => this.setState({ [name]: value })
+
+  getOpponent = async e => {
+    const req = {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ myName: this.state.submittedName })
+    };
+    await fetch(API + '/name/getOpponent', req)
+      .then(res => res.text())
+        .then(res => {
+          if (JSON.parse(res).retNames) {
+            this.stopAutomaticRefreshing();
+            this.setState({
+              opponentName: JSON.parse(res).retNames[0]
+            })
+          }
+        });
+
+  }
 
   handleSubmit = () => {
     const { name } = this.state
 
     this.setState({ submittedName: name })
+    const req = {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name: name })
+    };
+    fetch(API + '/name/setName', req)
+      .then(res => res.json())
+        .then(data => console.log(data));
   }
 
   choose = event => {
@@ -45,32 +84,14 @@ export default class AppHeader extends Component {
 
   render() {
 
-    const { name } = this.state
-
     return (
       <>
         <Grid>
-          <Grid.Row>
-          <Grid.Column width={8}>
-            <Header as='h1' textAlign='center'>Guess Who</Header>
-          </Grid.Column>
+          <Grid.Row stretched>
           <Grid.Column>
-            {this.state.submittedName && (
-              <Header as='h2' textAlign='left'>{this.state.name}</Header>
-            )}
-          {!this.state.submittedName && (
-            <Form  onSubmit={this.handleSubmit}>
-              <Form.Group inline>
-                <Form.Input
-                  placeholder="Name"
-                  name='name'
-                  value={name}
-                  onChange={this.handleChange}
-                />
-                <Form.Button>Start</Form.Button>
-              </Form.Group>
-            </Form>
-          )}
+            <Segment>
+              <Header as='h1' textAlign='center'>Guess Who</Header>
+            </Segment>
           </Grid.Column>
           </Grid.Row>
           <Grid.Row>
