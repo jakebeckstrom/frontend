@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Header, Grid, Button, Segment } from 'semantic-ui-react';
 
 const API = 'http://192.168.1.27:9000';
+const DEVAPI = 'http://localhost:9000';
 const REFRESH_EVERY_MS = 1000;
 
 export default class AppHeader extends Component {
@@ -34,7 +35,7 @@ export default class AppHeader extends Component {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ myName: this.state.submittedName })
     };
-    await fetch(API + '/name/getOpponent', req)
+    await fetch(DEVAPI + '/name/getOpponent', req)
       .then(res => res.text())
         .then(res => {
           if (JSON.parse(res).retNames) {
@@ -56,7 +57,7 @@ export default class AppHeader extends Component {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ name: name })
     };
-    fetch(API + '/name/setName', req)
+    fetch(DEVAPI + '/name/setName', req)
       .then(res => res.json())
         .then(data => console.log(data));
   }
@@ -76,7 +77,7 @@ export default class AppHeader extends Component {
 
   handleReset = async e => {
     console.log('reset');
-    await fetch(API + '/getImages/reset')
+    await fetch(DEVAPI + '/getImages/reset')
       .then(res => res.text())
         .then(res => console.log(JSON.parse(res).message))
           .catch(err => console.log(err));

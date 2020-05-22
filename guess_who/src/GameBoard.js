@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Grid, Segment, Image, Label } from 'semantic-ui-react';
 
 const API = 'http://192.168.1.27:9000';
+const DEVAPI = 'http://localhost:9000';
 
 export default class GameBoard extends Component {
   constructor(props) {
@@ -27,7 +28,7 @@ export default class GameBoard extends Component {
     this.id = 0;
     console.log("Made API call");
     console.log(this.props.set);
-    await fetch(API + '/getImages/' + this.props.set)
+    await fetch(DEVAPI + '/getImages/' + this.props.set)
       .then(res => res.text())
         .then(res => this.setState({ apiResponse: JSON.parse(res) }))
         .catch(err => console.log(err));

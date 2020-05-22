@@ -6,6 +6,7 @@ import CurrentCard from './CurrentCard';
 import { Grid } from 'semantic-ui-react';
 
 const API = 'http://192.168.1.27:9000';
+const DEVAPI = 'http://localhost:9000';
 const REFRESH_EVERY_MS = 1000;
 
 class App extends Component {
@@ -24,7 +25,7 @@ class App extends Component {
   }
 
   isChoiceMade = async e => {
-    await fetch(API + '/getImages/getChoice')
+    await fetch(DEVAPI + '/getImages/getChoice')
       .then(res => res.text())
         .then(res => {
           if (JSON.parse(res).setChosen !== this.state.setChosen) {
