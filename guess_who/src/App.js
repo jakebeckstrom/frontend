@@ -25,7 +25,7 @@ class App extends Component {
   }
 
   isChoiceMade = async e => {
-    await fetch(DEVAPI + '/getImages/getChoice')
+    await fetch(API + '/getImages/getChoice')
       .then(res => res.text())
         .then(res => {
           if (JSON.parse(res).setChosen !== this.state.setChosen) {

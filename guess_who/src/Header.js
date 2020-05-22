@@ -35,7 +35,7 @@ export default class AppHeader extends Component {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ myName: this.state.submittedName })
     };
-    await fetch(DEVAPI + '/name/getOpponent', req)
+    await fetch(API + '/name/getOpponent', req)
       .then(res => res.text())
         .then(res => {
           if (JSON.parse(res).retNames) {
@@ -57,7 +57,7 @@ export default class AppHeader extends Component {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ name: name })
     };
-    fetch(DEVAPI + '/name/setName', req)
+    fetch(API + '/name/setName', req)
       .then(res => res.json())
         .then(data => console.log(data));
   }
@@ -70,14 +70,14 @@ export default class AppHeader extends Component {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ set: choice })
     };
-    fetch(DEVAPI + '/getImages/setChoice', req)
+    fetch(API + '/getImages/setChoice', req)
       .then(res => res.json())
         .then(data => console.log(data));
   }
 
   handleReset = async e => {
     console.log('reset');
-    await fetch(DEVAPI + '/getImages/reset')
+    await fetch(API + '/getImages/reset')
       .then(res => res.text())
         .then(res => console.log(JSON.parse(res).message))
           .catch(err => console.log(err));

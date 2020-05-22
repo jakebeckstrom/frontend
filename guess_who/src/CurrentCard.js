@@ -25,7 +25,7 @@ export default class CurrentCard extends Component {
   }
 
   async callAPI() {
-    await fetch(DEVAPI + '/getChar/' + this.props.set)
+    await fetch(API + '/getChar/' + this.props.set)
       .then(res => res.text())
         .then(res => this.setState({ char: JSON.parse(res).char }))
         .catch(err => console.log(err));
@@ -42,7 +42,7 @@ export default class CurrentCard extends Component {
 
   getImageURL = name => {
     console.log(name);
-    return DEVAPI + '/' + this.props.set + '/' + name;
+    return API + '/' + this.props.set + '/' + name;
   }
 
   formatText = name => {

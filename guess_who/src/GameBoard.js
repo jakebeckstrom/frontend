@@ -42,7 +42,7 @@ export default class GameBoard extends Component {
     this.id = 0;
     console.log("Made API call");
     console.log(this.props.set);
-    await fetch(DEVAPI + '/getImages/' + this.props.set)
+    await fetch(API + '/getImages/' + this.props.set)
       .then(res => res.text())
         .then(res => this.setState({ apiResponse: JSON.parse(res) }))
         .catch(err => console.log(err));
@@ -78,7 +78,7 @@ export default class GameBoard extends Component {
   }
 
   getImageURL = name => {
-    return DEVAPI + '/' + this.props.set + '/' + name;
+    return API + '/' + this.props.set + '/' + name;
   }
 
   handleClick = event => {
@@ -87,7 +87,7 @@ export default class GameBoard extends Component {
     let i = event.currentTarget.id;
     this.toggled[i] = !this.toggled[i];
     if (this.toggled[i]) {
-      event.currentTarget.src = DEVAPI + '/public/black.png';
+      event.currentTarget.src = API + '/public/black.png';
     } else {
       console.log(i);
       let j = 0;
@@ -96,7 +96,7 @@ export default class GameBoard extends Component {
         i = i -8;
       }
       // console.log(j);
-      event.currentTarget.src = DEVAPI + '/' + this.props.set + '/' + this.state.chars[j][i];
+      event.currentTarget.src = API + '/' + this.props.set + '/' + this.state.chars[j][i];
     }
   }
 
