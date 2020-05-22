@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import { Segment, Label, Image } from 'semantic-ui-react';
 
-const LOCAL = 'http://' + window.location.hostname + ':9000';
-const APIHOST = 'http://' + window.location.hostname + ':9000/getChar';
+const LOCAL = 'http://192.168.1.27:9000';
+const APIHOST = 'http://192.168.1.27:9000/getChar';
 
 
 export default class CurrentCard extends Component {

@@ -5,7 +5,7 @@ import GameBoard from './GameBoard';
 import CurrentCard from './CurrentCard';
 import { Grid } from 'semantic-ui-react';
 
-const API = 'http://' + window.location.hostname + ':9000';
+const API = 'http://192.168.1.27:9000';
 const REFRESH_EVERY_MS = 1000;
 
 class App extends Component {

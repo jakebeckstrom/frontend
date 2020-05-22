@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Grid, Segment, Image, Label } from 'semantic-ui-react';
 
-const API = 'http://' + window.location.hostname + ':9000';
+const API = 'http://192.168.1.27:9000';
 
 export default class GameBoard extends Component {
   constructor(props) {
