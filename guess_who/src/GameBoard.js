@@ -22,7 +22,21 @@ export default class GameBoard extends Component {
     }
     this.handleClick = this.handleClick.bind(this);
   }
-
+  
+  componentDidUpdate(prevProps) {
+    if(this.props.set !== prevProps.set) {
+      this.setState({
+        apiResponse: "",
+        chars: [],
+        processed: false,
+      });
+      let i = 0;
+      for (i; i < 24; i++) {
+        this.toggled.push(false);
+      }
+      this.callAPI();
+    }
+  }
 
   async callAPI() {
     this.id = 0;
@@ -64,7 +78,7 @@ export default class GameBoard extends Component {
   }
 
   getImageURL = name => {
-    return API + '/' + this.props.set + '/' + name;
+    return DEVAPI + '/' + this.props.set + '/' + name;
   }
 
   handleClick = event => {
@@ -73,7 +87,7 @@ export default class GameBoard extends Component {
     let i = event.currentTarget.id;
     this.toggled[i] = !this.toggled[i];
     if (this.toggled[i]) {
-      event.currentTarget.src = API + '/public/black.png';
+      event.currentTarget.src = DEVAPI + '/public/black.png';
     } else {
       console.log(i);
       let j = 0;
@@ -82,7 +96,7 @@ export default class GameBoard extends Component {
         i = i -8;
       }
       // console.log(j);
-      event.currentTarget.src = API + '/' + this.props.set + '/' + this.state.chars[j][i];
+      event.currentTarget.src = DEVAPI + '/' + this.props.set + '/' + this.state.chars[j][i];
     }
   }
 

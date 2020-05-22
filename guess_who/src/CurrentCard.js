@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import { Segment, Label, Image } from 'semantic-ui-react';
 
-const LOCAL = 'http://192.168.1.27:9000';
-const APIHOST = 'http://192.168.1.27:9000/getChar';
+const API = 'http://192.168.1.27:9000';
+const DEVAPI = 'http://localhost:9000';
 
 
 export default class CurrentCard extends Component {
@@ -14,8 +14,18 @@ export default class CurrentCard extends Component {
     }
   }
 
+  componentDidUpdate(prevProps) {
+    if(this.props.set !== prevProps.set) {
+      this.setState({
+        chars: "",
+        processed: false,
+      });
+      this.callAPI();
+    }
+  }
+
   async callAPI() {
-    await fetch(APIHOST + '/' + this.props.set)
+    await fetch(DEVAPI + '/getChar/' + this.props.set)
       .then(res => res.text())
         .then(res => this.setState({ char: JSON.parse(res).char }))
         .catch(err => console.log(err));
@@ -32,7 +42,7 @@ export default class CurrentCard extends Component {
 
   getImageURL = name => {
     console.log(name);
-    return LOCAL + '/' + this.props.set + '/' + name;
+    return DEVAPI + '/' + this.props.set + '/' + name;
   }
 
   formatText = name => {

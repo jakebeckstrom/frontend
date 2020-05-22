@@ -70,7 +70,7 @@ export default class AppHeader extends Component {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ set: choice })
     };
-    fetch(API + '/getImages/setChoice', req)
+    fetch(DEVAPI + '/getImages/setChoice', req)
       .then(res => res.json())
         .then(data => console.log(data));
   }
