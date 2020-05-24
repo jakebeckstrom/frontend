@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Grid, Segment, Image, Label } from 'semantic-ui-react';
 
-const API = 'http://skiumah4.mynetgear.com:3006';
+const API = 'https://skiumah4.mynetgear.com:3006';
 
 export default class GameBoard extends Component {
   constructor(props) {
