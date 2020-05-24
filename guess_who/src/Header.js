@@ -55,6 +55,9 @@ export default class AppHeader extends Component {
             <Grid.Column width={2}>
               <Button id='Brooklyn' onClick={this.choose}>Brooklyn 99</Button>
             </Grid.Column>
+            <Grid.Column>
+              <Button id='HarryPotter' onClick={this.choose}>Harry Potter</Button>
+            </Grid.Column>
             <Grid.Column width={2}>
               <Button onClick={this.handleReset}>Start Over</Button>
             </Grid.Column>
