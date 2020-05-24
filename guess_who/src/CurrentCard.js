@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Segment, Label, Image } from 'semantic-ui-react';
 
-const API = 'http://skiumah4.mynetgear.com:3006';
+const API = 'https://guess-who-server12.herokuapp.com';
 
 
 export default class CurrentCard extends Component {

@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Grid, Segment, Image, Label } from 'semantic-ui-react';
 
-const API = 'http://skiumah4.mynetgear.com:3006';
+const API = 'https://guess-who-server12.herokuapp.com';
 
 export default class GameBoard extends Component {
   constructor(props) {
