@@ -23,8 +23,14 @@ export default class CurrentCard extends Component {
     }
   }
 
+
   async getChar() {
-    await fetch(API + '/getChar/' + this.props.set)
+    const req = {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ set: this.props.set })
+    };
+    await fetch(API + '/getChar', req)
       .then(res => res.text())
         .then(res => this.setState({ char: JSON.parse(res).char }))
         .catch(err => console.log(err));

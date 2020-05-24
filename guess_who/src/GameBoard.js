@@ -39,7 +39,7 @@ export default class GameBoard extends Component {
 
   async fetchImages() {
     this.id = 0;
-    await fetch(API + '/getImages/' + this.props.set)
+    await fetch(API + '/getImages')
       .then(res => res.text())
         .then(res => this.setState({ apiResponse: JSON.parse(res) }))
         .catch(err => console.log(err));
