@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
 import { Segment, Label, Image } from 'semantic-ui-react';
 
-const API = 'http://192.168.1.27:9000';
-const DEVAPI = 'http://localhost:9000';
+const API = 'http://skiumah4.mynetgear.com:3006';
 
 
 export default class CurrentCard extends Component {
