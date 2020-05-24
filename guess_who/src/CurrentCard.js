@@ -19,28 +19,26 @@ export default class CurrentCard extends Component {
         chars: "",
         processed: false,
       });
-      this.callAPI();
+      this.getChar();
     }
   }
 
-  async callAPI() {
+  async getChar() {
     await fetch(API + '/getChar/' + this.props.set)
       .then(res => res.text())
         .then(res => this.setState({ char: JSON.parse(res).char }))
         .catch(err => console.log(err));
 
-    console.log(this.state.char);
     this.setState({
       processed: true
     })
   }
 
   componentDidMount() {
-    this.callAPI();
+    this.getChar();
   }
 
   getImageURL = name => {
-    console.log(name);
     return API + '/' + this.props.set + '/' + name;
   }
 

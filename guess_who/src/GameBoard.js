@@ -33,43 +33,36 @@ export default class GameBoard extends Component {
       for (i; i < 24; i++) {
         this.toggled.push(false);
       }
-      this.callAPI();
+      this.fetchImages();
     }
   }
 
-  async callAPI() {
+  async fetchImages() {
     this.id = 0;
-    console.log("Made API call");
-    console.log(this.props.set);
     await fetch(API + '/getImages/' + this.props.set)
       .then(res => res.text())
         .then(res => this.setState({ apiResponse: JSON.parse(res) }))
         .catch(err => console.log(err));
 
-    console.log(this.state.apiResponse);
     let i = 0;
     let index = 0;
     for (i; i < 3; i++) {
       let temp = [];
       let per = 8;
       while (per > 0) {
-        // console.log(this.state.apiResponse.images[index]);
         temp.push(this.state.apiResponse.images[index]);
         index++;
         per--;
       }
       this.state.chars.push(temp);
     }
-    console.log(this.state.chars);
     this.setState({
       processed: true
     })
   }
 
-
   componentDidMount() {
-    console.log("Component mounted");
-    this.callAPI();
+    this.fetchImages();
   }
 
   formatText = name => {
@@ -81,20 +74,16 @@ export default class GameBoard extends Component {
   }
 
   handleClick = event => {
-    console.log("Clicked");
-    console.log(event.currentTarget.id);
     let i = event.currentTarget.id;
     this.toggled[i] = !this.toggled[i];
     if (this.toggled[i]) {
       event.currentTarget.src = API + '/public/black.png';
     } else {
-      console.log(i);
       let j = 0;
       while (i - 8 >= 0) {
         j++;
         i = i -8;
       }
-      // console.log(j);
       event.currentTarget.src = API + '/' + this.props.set + '/' + this.state.chars[j][i];
     }
   }

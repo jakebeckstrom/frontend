@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { Header, Grid, Button, Segment } from 'semantic-ui-react';
 
 const API = 'https://guess-who-server12.herokuapp.com';
-const REFRESH_EVERY_MS = 1000;
 
 export default class AppHeader extends Component {
   constructor() {
@@ -13,56 +12,9 @@ export default class AppHeader extends Component {
     }
 
     this.choose = this.choose.bind(this);
-
-    this.refreshInterval = setInterval(
-      this.getOpponent,
-      REFRESH_EVERY_MS
-    );
-
-    this.getOpponent();
-  }
-
-  stopAutomaticRefreshing() {
-    clearInterval(this.refreshInterval);
-  }
-
-  handleChange = (e, { name, value }) => this.setState({ [name]: value })
-
-  getOpponent = async e => {
-    const req = {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ myName: this.state.submittedName })
-    };
-    await fetch(API + '/name/getOpponent', req)
-      .then(res => res.text())
-        .then(res => {
-          if (JSON.parse(res).retNames) {
-            this.stopAutomaticRefreshing();
-            this.setState({
-              opponentName: JSON.parse(res).retNames[0]
-            })
-          }
-        });
-
-  }
-
-  handleSubmit = () => {
-    const { name } = this.state
-
-    this.setState({ submittedName: name })
-    const req = {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name: name })
-    };
-    fetch(API + '/name/setName', req)
-      .then(res => res.json())
-        .then(data => console.log(data));
   }
 
   choose = event => {
-    console.log(event.currentTarget.id);
     let choice = event.currentTarget.id;
     const req = {
       method: 'POST',
@@ -75,7 +27,6 @@ export default class AppHeader extends Component {
   }
 
   handleReset = async e => {
-    console.log('reset');
     await fetch(API + '/getImages/reset')
       .then(res => res.text())
         .then(res => console.log(JSON.parse(res).message))
