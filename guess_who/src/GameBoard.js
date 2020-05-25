@@ -110,7 +110,7 @@ export default class GameBoard extends Component {
     );
 
     const gameTile = images => (
-      <Grid.Row columns={8}>
+      <Grid.Row stretched columns={8}>
         {images.map(image => gameTileCol(image))}
        </Grid.Row>
     );
