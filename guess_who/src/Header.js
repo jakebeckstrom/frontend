@@ -1,12 +1,16 @@
 import React, { Component } from 'react';
-import { Header, Grid, Button, Segment, Dropdown } from 'semantic-ui-react';
+import { Header, Grid, Button, Segment, Dropdown, Input } from 'semantic-ui-react';
+import axios from 'axios';
 
-const API = 'https://guess-who-server12.herokuapp.com';
+// const API = 'https://guess-who-server12.herokuapp.com';
+const API = 'http://localhost:3000'
 
 export default class AppHeader extends Component {
   constructor() {
     super();
     this.state = {
+      images: [],
+      message: '',
       sets: [],
       processed: false,
       selected: false
@@ -17,7 +21,7 @@ export default class AppHeader extends Component {
 
   choose = (event, data) => {
     let choice = data.value;
-    const req = {
+    var req = {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ set: choice })
@@ -59,6 +63,42 @@ export default class AppHeader extends Component {
     })
     }
 
+  addImageSet = (event) => {
+    let images = []
+    for (var i = 0; i < event.target.files.length; i++) {
+      images[i] = event.target.files.item(i);
+    }
+    images = images.filter(image => image.name.match(/\.(jpg|jpeg|png|gif)$/))
+    this.setState({
+      images
+    })
+  }
+
+  setName = (event, data) => {
+    let message = data.value;
+    this.setState({
+      message
+    })
+  }
+
+  uploadImages = async e => {
+
+    const data = new FormData();
+
+    // data.append("setName", this.state.message);
+    this.state.images.map((image) => {
+      data.append("image", image, image.name);
+    });
+
+    console.log(data.getAll('image'));
+    data.append("setName", this.state.message);
+
+    axios.post(API + '/getImages/uploadSet', data)
+       .then(res => console.log(JSON.parse(res).Resp))
+          .catch(err => console.log(err));
+    this.getAvailableSets();
+  }
+
   render() {
 
     return (
@@ -72,7 +112,7 @@ export default class AppHeader extends Component {
           </Grid.Column>
           </Grid.Row>
           <Grid.Row>
-            <Grid.Column width={2}>
+            <Grid.Column width={3}>
               <Dropdown
                 id="selector" 
                 placeholder='Select Character Set'
@@ -85,6 +125,18 @@ export default class AppHeader extends Component {
             </Grid.Column>
             <Grid.Column width={2}>
               <Button onClick={this.handleReset}>Reset</Button>
+            </Grid.Column>
+            <Grid.Column width={8}>
+              <Input
+                onChange={this.setName}
+                />
+              <Input 
+                type='file' 
+                onChange={this.addImageSet} 
+                placeholder='Add Image Set'
+                multiple
+                />
+              <Button onClick={this.uploadImages}>Submit</Button>
             </Grid.Column>
           </Grid.Row>
         </Grid>
