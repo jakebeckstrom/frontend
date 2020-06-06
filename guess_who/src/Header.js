@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Header, Grid, Button, Segment, Dropdown, Input, Modal, Label } from 'semantic-ui-react';
+import { Header, Grid, Button, Segment, Dropdown, Input, Modal, Label, Divider } from 'semantic-ui-react';
 import axios from 'axios';
 
 // const API = 'https://guess-who-server12.herokuapp.com';
@@ -21,7 +21,11 @@ export default class AppHeader extends Component {
       needLessFiles: false,
       secretKey: '',
       auth: true,
-      success: ''
+      success: '',
+      secretRKey: '',
+      removed: '',
+      rname: '',
+      needRName: ''
     }
     this.getAvailableSets();
     this.choose = this.choose.bind(this);
@@ -65,11 +69,23 @@ export default class AppHeader extends Component {
       this.setState({
         sets: [],
         selected: false,
-        success: ''
+        success: '',
+        removed: '',
+        auth: false,
+        secretKey: '',
+        secretRKey: '',
+        uploadable: false,
+        needRName: '',
+        needName: true,
+        nameTaken: false,
+        needMoreFiles: true,
+        needLessFiles: false
       }, this.getAvailableSets);
     }
 
 
+
+    //Add Set functions
 
   validateUpload = () => {
     let names = this.state.sets.map((set) => {
@@ -108,7 +124,6 @@ export default class AppHeader extends Component {
 
   setKey = async (event, data) => {
     let secretKey = data.value;
-    console.log(data.value);
     this.setState({
       secretKey
     })
@@ -140,7 +155,6 @@ export default class AppHeader extends Component {
     fetch(API + '/getImages/checkKey', req)
       .then(res => res.json())
       .then(data => {
-        console.log(data);
         this.setState({
           auth: data.auth
         });
@@ -152,6 +166,74 @@ export default class AppHeader extends Component {
       })
         .catch(err => console.log(err));
   }
+
+
+  //Remove set Functions
+
+  validateRemove = () => {
+    let names = this.state.sets.map((set) => {
+      return set.value;
+    })
+
+    this.setState({
+      needRName: (names.includes(this.state.rname)),
+    });
+  }
+
+  setRKey = async (event, data) => {
+    let secretRKey = data.value;
+    console.log(data.value);
+    this.setState({
+      secretRKey
+    })
+  }
+
+  setRName = async (event, data) => {
+    let rname = data.value;
+    await this.setState({
+      rname
+    });
+    this.validateRemove();
+  }
+
+  sendRemove = () => {
+    var req = {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ rname: this.state.rname})
+    };
+    fetch(API + '/getImages/removeSet', req)
+      .then(res => res.json())
+        .then(data => {
+        let mes = data.Resp;
+        this.setState({
+          removed: mes
+        })
+      })
+          .catch(err => console.log(err));
+  }
+  
+  removeSet = () => {
+    var req = {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ secretKey: this.state.secretRKey})
+    };
+    fetch(API + '/getImages/checkKey', req)
+      .then(res => res.json())
+      .then(data => {
+        this.setState({
+          auth: data.auth
+        });
+        if(data.auth) {
+          this.sendRemove();
+        } else {
+          console.log('Not accepted');
+        }
+      })
+        .catch(err => console.log(err));
+  }
+
 
   render() {
 
@@ -183,57 +265,96 @@ export default class AppHeader extends Component {
             <Grid.Column width={8}>
               <Modal 
                 trigger={<Button>Upload New Set</Button>}
-                onClose={this.handleReset}>
-                <Segment attached='top'>
-                  <Input
-                    label='Name'
-                    onChange={this.setName}
-                    />
-                    {this.state.needName && (
-                      <Label basic color='red' pointing='left'>
-                        Please enter a name
-                      </Label>  
-                    )}
-                    {this.state.nameTaken && (
-                      <Label basic color='red' pointing='left'>
-                         Name is Taken
-                     </Label>
-                    )}
-                    </Segment>
-                <Segment attached>
-                  <Input
-                    type='file' 
-                    onChange={this.addImageSet} 
-                    placeholder='Add Image Set'
-                    multiple
-                    />
-                    {this.state.needLessFiles && (
-                      <Label basic color='red' pointing='left'>
-                       Too many files
-                      </Label>
-                    )}
-                    {this.state.needMoreFiles && (
-                      <Label basic color='red' pointing='left'>
-                        Not enough files
-                      </Label>
-                    )}
-                </Segment>
-                <Segment attached>
-                  <Input
-                  label='Secret Key'
-                  onChange={this.setKey}
-                  />
-                </Segment>
-                <Segment attached='bottom'>
-                  {this.state.uploadable ? (
-                      <Button 
-                        onClick={this.startUpload}>Upload</Button>
-                    ) :(
-                    <Button disabled>Upload</Button>
-                    )}
-                    {this.state.success !== '' &&
-                    (<Label color='green'>{this.state.success}</Label>)}
-                </Segment>
+                onClose={this.handleReset}
+                size='large'>
+                  <Segment>
+                  <Grid columns={2}>
+                    <Divider vertical fitted hidden/>
+                    <Grid.Row>
+                    <Grid.Column>
+                      <Segment attached='top'>
+                        <Input
+                          label='Name'
+                          onChange={this.setName}
+                          />
+                          {this.state.needName && (
+                            <Label basic color='red' pointing='left'>
+                              Please enter a name
+                            </Label>  
+                          )}
+                          {this.state.nameTaken && (
+                            <Label basic color='red' pointing='left'>
+                              Name is Taken
+                          </Label>
+                          )}
+                          </Segment>
+                      <Segment attached>
+                        <Input
+                          type='file' 
+                          onChange={this.addImageSet} 
+                          placeholder='Add Image Set'
+                          multiple
+                          />
+                          {this.state.needLessFiles && (
+                            <Label basic color='red' pointing='left'>
+                            Too many files
+                            </Label>
+                          )}
+                          {this.state.needMoreFiles && (
+                            <Label basic color='red' pointing='left'>
+                              Not enough files
+                            </Label>
+                          )}
+                      </Segment>
+                      <Segment attached>
+                        <Input
+                        label='Secret Key'
+                        onChange={this.setKey}
+                        />
+                      </Segment>
+                      <Segment attached='bottom'>
+                        {this.state.uploadable ? (
+                            <Button 
+                              onClick={this.startUpload}>Upload</Button>
+                          ) :(
+                          <Button disabled>Upload</Button>
+                          )}
+                          {this.state.success !== '' &&
+                          (<Label color='green'>{this.state.success}</Label>)}
+                      </Segment>
+                    </Grid.Column>
+                    <Grid.Column>
+                      <Segment attached='top'>
+                        Remove Set{`\t\t`}
+                        <Label basic color='red'>Warning: this cannot be undone</Label>
+                      </Segment>
+                      <Segment attached>
+                        <Input
+                          label='name'
+                          onChange={this.setRName}
+                          />
+                      </Segment>
+                      <Segment attached>
+                        <Input
+                          label='Secret Key'
+                          onChange={this.setRKey}
+                          />
+                      </Segment>
+                      <Segment attached='bottom'>
+                          {this.state.needRName ? (
+                            <Button 
+                              onClick={this.removeSet}>Remove</Button>
+                          ) :(
+                          <Button disabled>Remove</Button>
+                          )}
+                          {this.state.removed !== '' &&
+                          (<Label color='green'>{this.state.removed}</Label>)}
+                          
+                      </Segment>
+                    </Grid.Column>
+                    </Grid.Row>
+                  </Grid>
+                  </Segment>
                 </Modal>
             </Grid.Column>
           </Grid.Row>
