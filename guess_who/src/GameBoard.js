@@ -71,7 +71,7 @@ export default class GameBoard extends Component {
   }
 
   getImageURL = name => {
-    return API + '/' + this.props.set + '/' + name;
+    return API + '/public/' + this.props.set + '/' + name;
   }
 
   handleClick = event => {
