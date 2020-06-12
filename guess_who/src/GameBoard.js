@@ -2,7 +2,8 @@ import React, { Component } from 'react';
 import { Grid, Segment, Image, Label } from 'semantic-ui-react';
 
 // const API = 'https://guess-who-server12.herokuapp.com';
-const API = 'http://localhost:3000'
+const API = 'http://localhost:3000';
+const AWSHOST = 'http://guess-who-static-files.s3.amazonaws.com/';
 
 export default class GameBoard extends Component {
   constructor(props) {
@@ -56,6 +57,7 @@ export default class GameBoard extends Component {
         per--;
       }
       this.state.chars.push(temp);
+      console.log(this.state.chars);
     }
     this.setState({
       processed: true
@@ -67,25 +69,25 @@ export default class GameBoard extends Component {
   }
 
   formatText = name => {
-    return name.slice(0, -4);
+    return name.substring(name.indexOf('/')+1).slice(0, -4);
   }
 
   getImageURL = name => {
-    return API + '/public/' + this.props.set + '/' + name;
+    return AWSHOST  + name;
   }
 
   handleClick = event => {
     let i = event.currentTarget.id;
     this.toggled[i] = !this.toggled[i];
     if (this.toggled[i]) {
-      event.currentTarget.src = API + '/public/black.png';
+      event.currentTarget.src = AWSHOST + '/black.png';
     } else {
       let j = 0;
       while (i - 8 >= 0) {
         j++;
         i = i -8;
       }
-      event.currentTarget.src = API + '/' + this.props.set + '/' + this.state.chars[j][i];
+      event.currentTarget.src = AWSHOST + this.state.chars[j][i];
     }
   }
 

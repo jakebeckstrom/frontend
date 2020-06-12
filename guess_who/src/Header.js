@@ -48,12 +48,16 @@ export default class AppHeader extends Component {
 
   getAvailableSets = async () => {
     await fetch(API + '/getImages/getSets')
-      .then(res => res.text())
-        .then(res => this.setState(state => {
-          const sets = state.sets.concat(JSON.parse(res).sets);
-
+      .then(res => res.json())
+        .then(data => this.setState(state => {
+          let sets = state.sets;
+          console.log(data.sets);
+          data.sets.forEach(set => {
+            sets = sets.concat({key: set, value: set});
+          });
+          console.log(sets);
           return {
-            sets,
+            sets: sets,
             processed: true
           }
         }))

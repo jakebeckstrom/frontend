@@ -7,6 +7,7 @@ import { Grid } from 'semantic-ui-react';
 
 // const API = 'https://guess-who-server12.herokuapp.com';
 const API = 'http://localhost:3000'
+
 const REFRESH_EVERY_MS = 1000;
 
 class App extends Component {

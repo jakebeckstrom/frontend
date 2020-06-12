@@ -3,6 +3,7 @@ import { Segment, Label, Image } from 'semantic-ui-react';
 
 // const API = 'https://guess-who-server12.herokuapp.com';
 const API = 'http://localhost:3000'
+const AWSHOST = 'http://guess-who-static-files.s3.amazonaws.com/';
 
 
 export default class CurrentCard extends Component {
@@ -46,11 +47,11 @@ export default class CurrentCard extends Component {
   }
 
   getImageURL = name => {
-    return API + '/' + this.props.set + '/' + name;
+    return AWSHOST + name;
   }
 
   formatText = name => {
-    return name.slice(0, -4);
+    return name.substring(name.indexOf('/')+1).slice(0, -4);
   }
 
   render() {
