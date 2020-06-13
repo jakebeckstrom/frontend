@@ -5,6 +5,7 @@ import axios from 'axios';
 // const API = 'https://guess-who-server12.herokuapp.com';
 const API = 'http://localhost:3000'
 
+
 export default class AppHeader extends Component {
   constructor() {
     super();
@@ -46,23 +47,18 @@ export default class AppHeader extends Component {
     })
   }
 
-  getAvailableSets = async () => {
-    await fetch(API + '/getImages/getSets')
+  getAvailableSets = () => {
+    let imagesets = [];
+    fetch(API + '/getImages/getSets')
       .then(res => res.json())
-        .then(data => this.setState(state => {
-          let sets = state.sets;
-          console.log(data.sets);
-          data.sets.forEach(set => {
-            sets = sets.concat({key: set, value: set});
+        .then(data => {
+          data.sets.forEach(element => {
+            this.state.sets.push(element);
           });
-          console.log(sets);
-          return {
-            sets: sets,
-            processed: true
-          }
-        }))
+        })
           .catch(err => console.log(err));
   }
+
 
 
   handleReset = async e => {

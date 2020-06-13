@@ -80,7 +80,7 @@ export default class GameBoard extends Component {
     let i = event.currentTarget.id;
     this.toggled[i] = !this.toggled[i];
     if (this.toggled[i]) {
-      event.currentTarget.src = AWSHOST + '/black.png';
+      event.currentTarget.src = API + '/public/black.png';
     } else {
       let j = 0;
       while (i - 8 >= 0) {
