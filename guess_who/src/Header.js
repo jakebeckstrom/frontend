@@ -26,9 +26,9 @@ export default class AppHeader extends Component {
       secretRKey: '',
       removed: '',
       rname: '',
-      needRName: ''
+      needRName: true,
     }
-    this.getAvailableSets();
+    this.handleReset();
     this.choose = this.choose.bind(this);
   }
 
@@ -44,11 +44,11 @@ export default class AppHeader extends Component {
         .then(data => console.log(data));
     this.setState({
       selected: true
-    })
+    });
+    data.value = null;
   }
 
   getAvailableSets = () => {
-    let imagesets = [];
     fetch(API + '/getImages/getSets')
       .then(res => res.json())
         .then(data => {
@@ -57,6 +57,9 @@ export default class AppHeader extends Component {
           });
         })
           .catch(err => console.log(err));
+    this.setState({
+      processed: true
+    })
   }
 
 
@@ -69,6 +72,7 @@ export default class AppHeader extends Component {
       this.setState({
         sets: [],
         selected: false,
+        processed: false,
         success: '',
         removed: '',
         auth: false,
@@ -142,8 +146,7 @@ export default class AppHeader extends Component {
             success: mes
           })
         })
-            .catch(err => console.log(err));
-      
+            .catch(err => console.log(err));      
   }
 
   startUpload = e => {
@@ -176,13 +179,12 @@ export default class AppHeader extends Component {
     })
 
     this.setState({
-      needRName: (names.includes(this.state.rname)),
+      needRName: !(names.includes(this.state.rname)),
     });
   }
 
   setRKey = async (event, data) => {
     let secretRKey = data.value;
-    console.log(data.value);
     this.setState({
       secretRKey
     })
@@ -190,10 +192,9 @@ export default class AppHeader extends Component {
 
   setRName = async (event, data) => {
     let rname = data.value;
-    await this.setState({
+    this.setState({
       rname
-    });
-    this.validateRemove();
+    }, this.validateRemove)
   }
 
   sendRemove = () => {
@@ -249,6 +250,7 @@ export default class AppHeader extends Component {
           </Grid.Row>
           <Grid.Row>
             <Grid.Column width={3}>
+              {this.state.processed && (
               <Dropdown
                 id="selector" 
                 placeholder='Select Character Set'
@@ -257,7 +259,7 @@ export default class AppHeader extends Component {
                 selection
                 options={this.state.sets}
                 onChange={this.choose}
-                />
+                />)}
             </Grid.Column>
             <Grid.Column width={2}>
               <Button onClick={this.handleReset}>Reset</Button>
@@ -265,8 +267,8 @@ export default class AppHeader extends Component {
             <Grid.Column width={8}>
               <Modal 
                 trigger={<Button>Upload New Set</Button>}
-                onClose={this.handleReset}
-                size='large'>
+                size='large'
+                onUnmount={this.handleReset}>
                   <Segment>
                   <Grid columns={2}>
                     <Divider vertical fitted hidden/>
@@ -333,6 +335,11 @@ export default class AppHeader extends Component {
                           label='name'
                           onChange={this.setRName}
                           />
+                          {this.state.needRName && (
+                            <Label basic color='red' pointing='left'>
+                            Set doesn't exist
+                            </Label>
+                          )}
                       </Segment>
                       <Segment attached>
                         <Input
@@ -342,10 +349,10 @@ export default class AppHeader extends Component {
                       </Segment>
                       <Segment attached='bottom'>
                           {this.state.needRName ? (
+                          <Button disabled>Remove</Button>
+                          ) : (
                             <Button 
                               onClick={this.removeSet}>Remove</Button>
-                          ) :(
-                          <Button disabled>Remove</Button>
                           )}
                           {this.state.removed !== '' &&
                           (<Label color='green'>{this.state.removed}</Label>)}

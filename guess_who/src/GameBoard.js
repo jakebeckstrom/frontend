@@ -57,7 +57,6 @@ export default class GameBoard extends Component {
         per--;
       }
       this.state.chars.push(temp);
-      console.log(this.state.chars);
     }
     this.setState({
       processed: true
