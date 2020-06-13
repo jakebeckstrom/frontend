@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import { Grid, Segment, Image, Label } from 'semantic-ui-react';
 
-// const API = 'https://guess-who-server12.herokuapp.com';
-const API = 'http://localhost:3000';
+const API = 'https://guess-who-server12.herokuapp.com';
+// const API = 'http://localhost:3000';
 const AWSHOST = 'http://guess-who-static-files.s3.amazonaws.com/';
 
 export default class GameBoard extends Component {

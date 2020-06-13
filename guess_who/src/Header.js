@@ -2,8 +2,8 @@ import React, { Component } from 'react';
 import { Header, Grid, Button, Segment, Dropdown, Input, Modal, Label, Divider } from 'semantic-ui-react';
 import axios from 'axios';
 
-// const API = 'https://guess-who-server12.herokuapp.com';
-const API = 'http://localhost:3000'
+const API = 'https://guess-who-server12.herokuapp.com';
+// const API = 'http://localhost:3000'
 
 
 export default class AppHeader extends Component {
