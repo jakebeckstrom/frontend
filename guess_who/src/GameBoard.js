@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Grid, Segment, Image, Label } from 'semantic-ui-react';
 
-const API = 'https://guess-who-server12.herokuapp.com';
+// const API = 'https://guess-who-server12.herokuapp.com';
 // const API = 'http://localhost:3000';
 const AWSHOST = 'http://guess-who-static-files.s3.amazonaws.com/';
 
@@ -41,7 +41,7 @@ export default class GameBoard extends Component {
 
   async fetchImages() {
     this.id = 0;
-    await fetch(API + '/getImages')
+    await fetch(process.env.REACT_APP_API + '/getImages')
       .then(res => res.text())
         .then(res => this.setState({ apiResponse: JSON.parse(res) }))
         .catch(err => console.log(err));
@@ -79,7 +79,7 @@ export default class GameBoard extends Component {
     let i = event.currentTarget.id;
     this.toggled[i] = !this.toggled[i];
     if (this.toggled[i]) {
-      event.currentTarget.src = API + '/public/black.png';
+      event.currentTarget.src = process.env.REACT_APP_API + '/public/black.png';
     } else {
       let j = 0;
       while (i - 8 >= 0) {

@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Segment, Label, Image } from 'semantic-ui-react';
 
-const API = 'https://guess-who-server12.herokuapp.com';
+// const API = 'https://guess-who-server12.herokuapp.com';
 // const API = 'http://localhost:3000'
 const AWSHOST = 'http://guess-who-static-files.s3.amazonaws.com/';
 
@@ -32,7 +32,7 @@ export default class CurrentCard extends Component {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ set: this.props.set })
     };
-    await fetch(API + '/getChar', req)
+    await fetch(process.env.REACT_APP_API + '/getChar', req)
       .then(res => res.text())
         .then(res => this.setState({ char: JSON.parse(res).char }))
         .catch(err => console.log(err));

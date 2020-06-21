@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Header, Grid, Button, Segment, Dropdown, Input, Modal, Label, Divider } from 'semantic-ui-react';
 import axios from 'axios';
 
-const API = 'https://guess-who-server12.herokuapp.com';
+// const API = 'https://guess-who-server12.herokuapp.com';
 // const API = 'http://localhost:3000'
 
 
@@ -28,6 +28,7 @@ export default class AppHeader extends Component {
       rname: '',
       needRName: true,
     }
+    console.log(process.env.REACT_APP_API);
     this.handleReset();
     this.choose = this.choose.bind(this);
   }
@@ -39,7 +40,7 @@ export default class AppHeader extends Component {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ set: choice })
     };
-    fetch(API + '/getImages/setChoice', req)
+    fetch(process.env.REACT_APP_API + '/getImages/setChoice', req)
       .then(res => res.json())
         .then(data => console.log(data));
     this.setState({
@@ -49,7 +50,7 @@ export default class AppHeader extends Component {
   }
 
   getAvailableSets = () => {
-    fetch(API + '/getImages/getSets')
+    fetch(process.env.REACT_APP_API + '/getImages/getSets')
       .then(res => res.json())
         .then(data => {
           data.sets.forEach(element => {
@@ -65,7 +66,7 @@ export default class AppHeader extends Component {
 
 
   handleReset = async e => {
-    await fetch(API + '/getImages/reset')
+    await fetch(process.env.REACT_APP_API + '/getImages/reset')
       .then(res => res.text())
         .then(res => console.log(JSON.parse(res).message))
           .catch(err => console.log(err));
@@ -139,7 +140,7 @@ export default class AppHeader extends Component {
         data.append("image", image, image.name);
       });
       data.append("setName", this.state.message);
-      axios.post(API + '/getImages/uploadSet', data)
+      axios.post(process.env.REACT_APP_API + '/getImages/uploadSet', data)
         .then(res => {
           let mes = res.data.Resp;
           this.setState({
@@ -155,7 +156,7 @@ export default class AppHeader extends Component {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ secretKey: this.state.secretKey})
     };
-    fetch(API + '/getImages/checkKey', req)
+    fetch(process.env.REACT_APP_API + '/getImages/checkKey', req)
       .then(res => res.json())
       .then(data => {
         this.setState({
@@ -203,7 +204,7 @@ export default class AppHeader extends Component {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ rname: this.state.rname})
     };
-    fetch(API + '/getImages/removeSet', req)
+    fetch(process.env.REACT_APP_API + '/getImages/removeSet', req)
       .then(res => res.json())
         .then(data => {
         let mes = data.Resp;
@@ -220,7 +221,7 @@ export default class AppHeader extends Component {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ secretKey: this.state.secretRKey})
     };
-    fetch(API + '/getImages/checkKey', req)
+    fetch(process.env.REACT_APP_API + '/getImages/checkKey', req)
       .then(res => res.json())
       .then(data => {
         this.setState({

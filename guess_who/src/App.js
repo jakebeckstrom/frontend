@@ -5,7 +5,7 @@ import GameBoard from './GameBoard';
 import CurrentCard from './CurrentCard';
 import { Grid } from 'semantic-ui-react';
 
-const API = 'https://guess-who-server12.herokuapp.com';
+// const API = 'https://guess-who-server12.herokuapp.com';
 // const API = 'http://localhost:3000'
 
 const REFRESH_EVERY_MS = 1000;
@@ -26,7 +26,7 @@ class App extends Component {
   }
 
   isChoiceMade = async e => {
-    await fetch(API + '/getImages/getChoice')
+    await fetch(process.env.REACT_APP_API + '/getImages/getChoice')
       .then(res => res.text())
         .then(res => {
           if (JSON.parse(res).setChosen !== this.state.setChosen) {
