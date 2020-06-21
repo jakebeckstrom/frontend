@@ -244,8 +244,8 @@ export default class AppHeader extends Component {
         <Grid>
           <Grid.Row stretched>
           <Grid.Column>
-            <Segment>
-              <Header as='h1' textAlign='center'>Guess Who</Header>
+            <Segment raised padded>
+              <Header as='h1' textAlign='center' color='blue'>Guess Who</Header>
             </Segment>
           </Grid.Column>
           </Grid.Row>

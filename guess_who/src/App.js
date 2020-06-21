@@ -3,7 +3,7 @@ import './App.css';
 import AppHeader from './Header';
 import GameBoard from './GameBoard';
 import CurrentCard from './CurrentCard';
-import { Grid } from 'semantic-ui-react';
+import { Grid, Segment, Loader } from 'semantic-ui-react';
 
 // const API = 'https://guess-who-server12.herokuapp.com';
 // const API = 'http://localhost:3000'
@@ -54,7 +54,9 @@ class App extends Component {
           </Grid.Row>
         </Grid>
       )}  { !this.state.setChosen && (
-        <h1>Choose your character set</h1>
+        <Segment>
+           <Loader active inline='centered'>Choose Your Character Set</Loader>
+        </Segment>
       )}
       </>
     )
