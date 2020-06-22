@@ -5,8 +5,6 @@ import GameBoard from './GameBoard';
 import CurrentCard from './CurrentCard';
 import { Grid, Segment, Loader } from 'semantic-ui-react';
 
-// const API = 'https://guess-who-server12.herokuapp.com';
-// const API = 'http://localhost:3000'
 
 const REFRESH_EVERY_MS = 1000;
 
