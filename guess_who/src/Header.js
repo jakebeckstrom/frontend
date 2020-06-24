@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Header, Grid, Button, Segment, Dropdown } from 'semantic-ui-react';
+import { Header, Grid, Button, Segment, Dropdown, Input } from 'semantic-ui-react';
 import Upload from './Upload';
 
 
@@ -10,7 +10,9 @@ export default class AppHeader extends Component {
       message: '',
       sets: [],
       processed: false,
-      selected: false
+      selected: false,
+      name: '',
+      opponent: ''
     }
     console.log(process.env.REACT_APP_API);
     this.handleReset();
@@ -60,18 +62,35 @@ export default class AppHeader extends Component {
         processed: false
       }, this.getAvailableSets);
     }
+  
+    setName = (event, data) => {
+      this.setState({
+        name: data.value
+      });
+    }
 
+    sendName = () => {
+      console.log(this.state.name);
+    }
 
   render() {
 
     return (
       <>
         <Grid>
-          <Grid.Row stretched>
-          <Grid.Column>
+          <Grid.Row>
+            <Grid.Column width={2}/>
+          <Grid.Column width={10}>
             <Segment raised padded>
               <Header as='h1' textAlign='center' color='blue'>Guess Who</Header>
             </Segment>
+          </Grid.Column>
+          <Grid.Column width={2}>
+            <Input
+              label='Name'
+              onChange={this.setName} />
+            <Button
+              onClick={this.sendName} >Play</Button>
           </Grid.Column>
           </Grid.Row>
           <Grid.Row>
