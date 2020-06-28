@@ -12,7 +12,8 @@ class App extends Component {
   constructor() {
     super();
     this.state = {
-      setChosen: ""
+      setChosen: "",
+      gameId: 100
     }
 
     this.refreshInterval = setInterval(
@@ -23,27 +24,49 @@ class App extends Component {
     this.isChoiceMade();
   }
 
+  setGameId = (i) => {
+    console.log('game start');
+    console.log(i);
+    this.setState({
+      gameId: i
+    });
+
+  }
+
   isChoiceMade = async e => {
-    await fetch(process.env.REACT_APP_API + '/getImages/getChoice')
-      .then(res => res.text())
-        .then(res => {
-          if (JSON.parse(res).setChosen !== this.state.setChosen) {
-            this.setState({ setChosen: JSON.parse(res).setChosen })
-          }
-          })
-        .catch(err => console.log(err));
+    console.log(this.state.gameId);
+    if (this.state.gameId === 100) {
+      return;
+    } else {
+      var req = {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: this.state.gameId })
+      };
+
+      await fetch(process.env.REACT_APP_API + '/getImages/getChoice', req)
+        .then(res => res.text())
+          .then(res => {
+            if (JSON.parse(res).setChosen !== this.state.setChosen) {
+              this.setState({ setChosen: JSON.parse(res).setChosen })
+            }
+            })
+          .catch(err => console.log(err));
+    }
   }
 
   render() {
     return (
       <>
-        <AppHeader/>
+        <AppHeader
+          setGameId={this.setGameId}/>
         {this.state.setChosen && (
         <Grid>
           <Grid.Row>
             <Grid.Column width={14}>
               <GameBoard
-                set={this.state.setChosen}/>
+                set={this.state.setChosen}
+                gameId={this.state.gameId}/>
             </Grid.Column>
             <Grid.Column width={2}>
               <CurrentCard

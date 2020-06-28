@@ -39,7 +39,12 @@ export default class GameBoard extends Component {
 
   async fetchImages() {
     this.id = 0;
-    await fetch(process.env.REACT_APP_API + '/getImages')
+    var req = {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id: this.props.gameId })
+    };
+    await fetch(process.env.REACT_APP_API + '/getImages', req)
       .then(res => res.text())
         .then(res => this.setState({ apiResponse: JSON.parse(res) }))
         .catch(err => console.log(err));
