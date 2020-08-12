@@ -20,16 +20,40 @@ export default class AppHeader extends Component {
       new: true,
       oppChosen: false,
       playerSet: false,
-      gameId: 100
+      gameId: 100,
+      finished: false
     }
-    this.handleReset();
     this.choose = this.choose.bind(this);
     this.refreshInterval = setInterval(
       this.getOpponents,
       REFRESH_EVERY_MS
     );
-
     this.getOpponents();
+  }
+
+  checkGame = () => {
+    var req = {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ player: this.state.name, id: this.state.gameId })
+    };
+    fetch(process.env.REACT_APP_API + '/getImages/checkGame', req)
+      .then(res => res.json())
+        .then(data => {
+          if (data.end) {
+            clearInterval(this.gameInterval);
+            this.setState({
+              name: '',
+              opponent: '',
+              nameSet: false,
+              oppSet: false,
+              new: true,
+              oppChosen: false,
+              playerSet: false,
+              gameId: 100
+            })
+          }
+        });
   }
 
   choose = (event, data) => {
@@ -57,7 +81,6 @@ export default class AppHeader extends Component {
           });
         })
           .catch(err => console.log(err));
-    console.log(this.state.sets);
     this.setState({
       processed: true
     })
@@ -66,7 +89,12 @@ export default class AppHeader extends Component {
 
 
   handleReset = async e => {
-    await fetch(process.env.REACT_APP_API + '/getImages/reset')
+    var req = {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id: this.state.gameId }) 
+    }
+    await fetch(process.env.REACT_APP_API + '/getImages/reset', req)
       .then(res => res.text())
         .then(res => console.log(JSON.parse(res).message))
           .catch(err => console.log(err));
@@ -76,18 +104,6 @@ export default class AppHeader extends Component {
         processed: false
       }, this.getAvailableSets);
     }
-  
-  componentWillUnmount() {
-    const req = {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ player: this.state.name })
-    };
-    fetch(process.env.REACT_APP_API + '/getImages/removePlayer', req)
-    .then(res => res.text())
-      .then(res => console.log(res))
-        .catch(err => console.log(err));
-  }
 
     setName = (event, data) => {
       this.setState({
@@ -119,7 +135,6 @@ export default class AppHeader extends Component {
     }
 
     sendName = () => {
-      console.log(this.state.name);
       const req = {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -130,14 +145,12 @@ export default class AppHeader extends Component {
         .then(res => JSON.parse(res))
           .then(res => {
               console.log(res.success);
-              // this.props.setGameId(res.id);
           })
           .catch(err => console.log(err));
       this.setState({
         nameSet: true
       });
       clearInterval(this.refreshInterval);
-      console.log("Set interval");
       this.refreshOpp = setInterval(
         this.joinedGame,
         REFRESH_EVERY_MS
@@ -163,7 +176,6 @@ export default class AppHeader extends Component {
       .then(res => res.text())
         .then(res => JSON.parse(res))
           .then(res => {
-            console.log(res.success);
             this.setState({
               gameId: res.id
             })
@@ -177,10 +189,16 @@ export default class AppHeader extends Component {
       this.setState({
         playerSet: true
       });
+      this.getAvailableSets();
+      this.gameInterval = setInterval(
+        this.checkGame,
+        1000
+      );
+        
+      this.checkGame();
     }
 
     joinedGame = () => {
-      console.log("Checkgame");
       const req = {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -190,18 +208,17 @@ export default class AppHeader extends Component {
       };
       fetch(process.env.REACT_APP_API + '/getImages/gameJoined', req)
       .then(res => res.text())
-        .then(res => JSON.parse(res))
           .then(res => {
-            let op = res.opponent;
-              console.log(op)
+              let data = JSON.parse(res);
+            let op =data.opponent;
               if (op !== '') {
                 clearInterval(this.refreshOpp);
                 this.setState({
                   oppChosen: true,
                   opponent: op,
-                  gameId: res.id
+                  gameId: data.id
                 }, this.setPlayers);
-                this.props.setGameId(res.id);
+                this.props.setGameId(data.id);
               }
           })
           .catch(err => console.log(err));

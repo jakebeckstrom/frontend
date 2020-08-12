@@ -25,8 +25,6 @@ class App extends Component {
   }
 
   setGameId = (i) => {
-    console.log('game start');
-    console.log(i);
     this.setState({
       gameId: i
     });
@@ -34,7 +32,6 @@ class App extends Component {
   }
 
   isChoiceMade = async e => {
-    console.log(this.state.gameId);
     if (this.state.gameId === 100) {
       return;
     } else {
