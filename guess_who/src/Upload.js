@@ -97,7 +97,7 @@ export default class Upload extends Component {
 
   uploadImages = e => {
       const data = new FormData();
-      this.state.images.map((image) => {
+      this.state.images.foreach((image) => {
         data.append("image", image, image.name);
       });
       data.append("setName", this.state.message);
