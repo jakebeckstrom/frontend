@@ -1,135 +1,52 @@
-import React, { Component } from 'react';
-import { Grid, Segment, Image, Label } from 'semantic-ui-react';
+import React from 'react';
+import { makeStyles } from '@material-ui/core/styles';
+import Grid from '@material-ui/core/Grid';
+import Card from './components/Card';
 
-const AWSHOST = 'http://guess-who-static-files.s3.amazonaws.com/';
+const useStyles = makeStyles((theme) => ({
+  root: {
+    flexGrow: 1,
+  },
+  tile: {
+    padding: theme.spacing(2),
+    height: 'auto',
+    width: '10%',
+  },
+  paper: {
+    padding: theme.spacing(2),
+    textAlign: 'center',
+    color: theme.palette.text.secondary,
+    width: '100%',
+  },
+  image: {
+    width: '100%',
+    height: 200,
+  },
+  img: {
+    margin: 'auto',
+    display: 'block',
+    maxWidth: '100%',
+    maxHeight: '100%',
+  },
+}));
 
-export default class GameBoard extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      apiResponse: "",
-      chars: [],
-      processed: false,
-    };
-    this.col = 6;
-    this.row = 4;
-    this.id = 0;
-    this.toggled = [];
-    let i = 0;
-    for (i; i < 24; i++) {
-      this.toggled.push(false);
-    }
-    this.handleClick = this.handleClick.bind(this);
-  }
-  
-  componentDidUpdate(prevProps) {
-    if(this.props.set !== prevProps.set) {
-      this.setState({
-        apiResponse: "",
-        chars: [],
-        processed: false,
-      });
-      let i = 0;
-      for (i; i < 24; i++) {
-        this.toggled.push(false);
-      }
-      this.fetchImages();
-    }
-  }
+export default function GameBoard({charList}) {
+  const classes = useStyles();
 
-  async fetchImages() {
-    this.id = 0;
-    var req = {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ id: this.props.gameId })
-    };
-    await fetch(process.env.REACT_APP_API + '/getImages', req)
-      .then(res => res.text())
-        .then(res => this.setState({ apiResponse: JSON.parse(res) }))
-        .catch(err => console.log(err));
-
-    let i = 0;
-    let index = 0;
-    for (i; i < 3; i++) {
-      let temp = [];
-      let per = 8;
-      while (per > 0) {
-        temp.push(this.state.apiResponse.images[index]);
-        index++;
-        per--;
-      }
-      this.state.chars.push(temp);
-    }
-    this.setState({
-      processed: true
-    })
-  }
-
-  componentDidMount() {
-    this.fetchImages();
-  }
-
-  formatText = name => {
-    return name.substring(name.indexOf('/')+1).slice(0, -4);
-  }
-
-  getImageURL = name => {
-    return AWSHOST  + name;
-  }
-
-  handleClick = event => {
-    let i = event.currentTarget.id;
-    this.toggled[i] = !this.toggled[i];
-    if (this.toggled[i]) {
-      event.currentTarget.src = process.env.REACT_APP_API + '/public/black.png';
-    } else {
-      let j = 0;
-      while (i - 8 >= 0) {
-        j++;
-        i = i -8;
-      }
-      event.currentTarget.src = AWSHOST + this.state.chars[j][i];
-    }
-  }
-
-  setID() {
-    return this.id++;
-  }
-
-  render() {
-
-
-    const gameTileCol = image => (
-
-      <Grid.Column width={2}>
-        <Segment>
-            <Image
-                id={this.setID()}
-                onClick={this.handleClick}
-                src={this.getImageURL(image)}
-                 />
-            <Label attached='bottom'>{this.formatText(image)}</Label>
-        </Segment>
-      </Grid.Column>
+  function GameTile({image}) {
+    return(
+      <Card
+        char={image}
+        disabled={false}
+      />
     );
-
-    const gameTile = images => (
-      <Grid.Row stretched columns={8}>
-        {images.map(image => gameTileCol(image))}
-       </Grid.Row>
-    );
-
-    return (
-      <>
-        {this.state.processed && (
-          <Grid centered>
-            {this.state.chars.map(image => gameTile(image))}
-          </Grid>
-        )} {!this.state.processed && (
-          <p>Loading</p>
-        )}
-      </>
-    )
   }
+
+  return (
+    <div className={classes.root}>
+      <Grid container spacing={3}>
+        {charList.map((image) => <GameTile image={image}/>)}
+      </Grid>
+    </div>
+  );
 }

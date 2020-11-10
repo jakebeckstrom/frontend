@@ -1,305 +1,123 @@
-import React, { Component } from 'react';
-import { Header, Grid, Button, Segment, Dropdown, Input, Divider } from 'semantic-ui-react';
-import Upload from './Upload';
+import React from 'react';
+import { Button, Typography, Container, Menu, MenuItem, IconButton } from '@material-ui/core';
+import Upload from './components/Upload';
+import Remove from './components/Remove';
+import JoinGame from './components/JoinGame';
+import { fetchSets, postSet } from './utils/Api';
 
-const REFRESH_EVERY_MS = 2000;
 
-export default class AppHeader extends Component {
-  constructor() {
-    super();
-    this.state = {
-      message: '',
-      sets: [],
-      opps: [],
-      processed: false,
-      selected: false,
-      name: '',
-      opponent: '',
-      nameSet: false,
-      oppSet: false,
-      new: true,
-      oppChosen: false,
-      playerSet: false,
-      gameId: 100,
-      finished: false
+export default function AppHeader({updateGameId, updateName, gameId,
+  updateOpponent, updateIsPlayerOne, updateSet, name, opponent, set, reset}) {
+
+    const [sets, updateSets] = React.useState([]);
+    const [anchorEl, setAnchorEl] = React.useState(null);
+    const [uploadOpen, setUploadOpen] = React.useState(false);
+    const [joinOpen, setJoinOpen] = React.useState(false);
+    const [removeOpen, setRemoveOpen] = React.useState(false);
+    const [change, setChange] = React.useState(false);
+
+    //Modal Open and close toggles
+    const handleUploadOpen = () => { setUploadOpen(true); };
+    const handleUploadClose = () => { setUploadOpen(false); };
+    const handleJoinOpen = () => { setJoinOpen(true); };
+    const handleJoinClose = () => { setJoinOpen(false); };
+    const handleRemoveOpen = () => { setRemoveOpen(true); };
+    const handleRemoveClose = () => { setRemoveOpen(false); };
+
+    //Listens for changes to set as result of remove or upload set
+    React.useEffect(() => {
+      fetchSets(updateSets);
+    }, [change])
+
+    //toggles fror opening and closing menu
+    const handleClick = (event) => { setAnchorEl(event.currentTarget); };
+    const handleClose = () => { setAnchorEl(null); };
+
+    //Handles selection of a set from menu
+    const choose = (event) => {
+      postSet(gameId, event.currentTarget.id, updateSet)
+      handleClose();
     }
-    this.choose = this.choose.bind(this);
-    this.refreshInterval = setInterval(
-      this.getOpponents,
-      REFRESH_EVERY_MS
-    );
-    this.getOpponents();
-  }
-
-  checkGame = () => {
-    var req = {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ player: this.state.name, id: this.state.gameId })
-    };
-    fetch(process.env.REACT_APP_API + '/getImages/checkGame', req)
-      .then(res => res.json())
-        .then(data => {
-          if (data.end) {
-            clearInterval(this.gameInterval);
-            this.setState({
-              name: '',
-              opponent: '',
-              nameSet: false,
-              oppSet: false,
-              new: true,
-              oppChosen: false,
-              playerSet: false,
-              gameId: 100
-            })
-          }
-        });
-  }
-
-  choose = (event, data) => {
-    let choice = data.value;
-    var req = {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ set: choice, id: this.state.gameId })
-    };
-    fetch(process.env.REACT_APP_API + '/getImages/setChoice', req)
-      .then(res => res.json())
-        .then(data => console.log(data));
-    this.setState({
-      selected: true
-    });
-    data.value = null;
-  }
-
-  getAvailableSets = () => {
-    fetch(process.env.REACT_APP_API + '/getImages/getSets')
-      .then(res => res.json())
-        .then(data => {
-          data.sets.forEach(element => {
-            this.state.sets.push(element);
-          });
-        })
-          .catch(err => console.log(err));
-    this.setState({
-      processed: true
-    })
-  }
-
-
-
-  handleReset = async e => {
-    var req = {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ id: this.state.gameId }) 
-    }
-    await fetch(process.env.REACT_APP_API + '/getImages/reset', req)
-      .then(res => res.text())
-        .then(res => console.log(JSON.parse(res).message))
-          .catch(err => console.log(err));
-      this.setState({
-        sets: [],
-        selected: false,
-        processed: false
-      }, this.getAvailableSets);
-    }
-
-    setName = (event, data) => {
-      this.setState({
-        name: data.value
-      });
-    }
-
-    getOpponents = () => {
-      if (!this.state.oppChosen) {
-        let others = [];
-        fetch(process.env.REACT_APP_API + '/getImages/getOpponents')
-        .then(res => res.json())
-          .then(data => {
-            data.opponents.forEach(element => {
-              others.push({key: element, text: element, value: element});
-            });
-            if (others !== this.state.opps) {
-              this.setState({
-                new: false
-              }, function() {
-                this.setState({
-                  opp: others,
-                  new: true
-                })}
-                );
-            }
-          })
-      }
-    }
-
-    sendName = () => {
-      const req = {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ player: this.state.name })
-      };
-      fetch(process.env.REACT_APP_API + '/getImages/addName', req)
-      .then(res => res.text())
-        .then(res => JSON.parse(res))
-          .then(res => {
-              console.log(res.success);
-          })
-          .catch(err => console.log(err));
-      this.setState({
-        nameSet: true
-      });
-      clearInterval(this.refreshInterval);
-      this.refreshOpp = setInterval(
-        this.joinedGame,
-        REFRESH_EVERY_MS
-      );
-  
-      this.joinedGame();
-    }
-
-    startGame = (event, data) => {
-      this.setState({
-        opponent: data.value,
-        oppChosen: true
-      })
-      const req = {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-          player: this.state.name,
-          opponent: data.value
-         })
-      };
-      fetch(process.env.REACT_APP_API + '/getImages/joinGame', req)
-      .then(res => res.text())
-        .then(res => JSON.parse(res))
-          .then(res => {
-            this.setState({
-              gameId: res.id
-            })
-            this.props.setGameId(res.id);
-          })
-          .catch(err => console.log(err));
-      this.setPlayers();
-    }
-
-    setPlayers = () => {
-      this.setState({
-        playerSet: true
-      });
-      this.getAvailableSets();
-      this.gameInterval = setInterval(
-        this.checkGame,
-        1000
-      );
-        
-      this.checkGame();
-    }
-
-    joinedGame = () => {
-      const req = {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-          player: this.state.name
-         })
-      };
-      fetch(process.env.REACT_APP_API + '/getImages/gameJoined', req)
-      .then(res => res.text())
-          .then(res => {
-              let data = JSON.parse(res);
-            let op =data.opponent;
-              if (op !== '') {
-                clearInterval(this.refreshOpp);
-                this.setState({
-                  oppChosen: true,
-                  opponent: op,
-                  gameId: data.id
-                }, this.setPlayers);
-                this.props.setGameId(data.id);
-              }
-          })
-          .catch(err => console.log(err));
-      
-    }
-
-  render() {
 
     return (
-      <>
-        <Grid>
-          <Grid.Row>
-            <Grid.Column width={1}/>
-          <Grid.Column width={8}>
-            <Segment raised padded>
-              <Header as='h1' textAlign='center' color='blue'>Guess Who</Header>
-            </Segment>
-          </Grid.Column>
-          {this.state.playerSet ?(
-          <Grid.Column width={2}>
-            <Segment>
-              <Grid  columns={2} stackable textAlign='center'>
-                <Divider vertical>vs</Divider>
-                <Grid.Column>
-                  {this.state.name}
-                </Grid.Column>
-                <Grid.Column>
-                  {this.state.opponent}
-                </Grid.Column>
-              </Grid>
-            </Segment>
-          </Grid.Column>
-          ) : (
-            <>
-          <Grid.Column width={2}>
-            <Input
-              label='Name'
-              onChange={this.setName} />
-              {!this.state.nameSet &&(
-            <Button
-              disabled={(this.state.name === '')}
-              onClick={this.sendName}>Start Game</Button>)}
-          </Grid.Column>
-          <Grid.Column width={2}>
-            {this.state.new && (
-            <Dropdown
-              id="opponent"
-              disabled={(this.state.name === '' || this.state.nameSet)}
-              fluid
-              selection
-              options={this.state.opp}
-              onChange={this.startGame}
-              />)}
-          </Grid.Column>
-          </>
-          )}
-          </Grid.Row>
-          <Grid.Row>
-            <Grid.Column width={3}>
-              {this.state.processed && (
-              <Dropdown
-                id="selector" 
-                placeholder='Select Character Set'
-                fluid
-                search
-                selection
-                options={this.state.sets}
-                onChange={this.choose}
-                />)}
-            </Grid.Column>
-            <Grid.Column width={2}>
-              <Button onClick={this.handleReset}>Reset</Button>
-            </Grid.Column>
-            <Grid.Column width={8}>
-                <Upload 
-                  sets={this.state.sets}
-                  handleReset={this.handleReset}/>
-            </Grid.Column>
-          </Grid.Row>
-        </Grid>
-      </>
+      <Container className="header">
+          <Upload 
+            open={uploadOpen} 
+            sets={sets} 
+            handleClickOpen={handleUploadOpen} 
+            handleClickClose={handleUploadClose} 
+            setChange={setChange} 
+            change={change} />
+          <Remove 
+            open={removeOpen}  
+            sets={sets} 
+            handlClickOpen={handleRemoveOpen} 
+            handleClickClose={handleRemoveClose} 
+            setChange={setChange} 
+            change={change}/>
+          <JoinGame 
+            open={joinOpen} 
+            handleClickOpen={handleJoinOpen} 
+            handleClickClose={handleJoinClose} 
+            updateGameId={updateGameId}
+            updateName={updateName}
+            updateOpponent={updateOpponent}
+            updateIsPlayerOne={updateIsPlayerOne}/>
+            <Typography variant='h3' className="title">
+              Guess Who
+            </Typography>
+            <Button 
+              className="button" 
+              aria-controls="simple-menu" 
+              aria-haspopup="true" 
+              onClick={handleClick}>
+              {set === "" ? 'Select Character Set' : set}
+            </Button>
+            <Menu
+              id="simple-menu"
+              anchorEl={anchorEl}
+              keepMounted
+              open={Boolean(anchorEl)}
+              onClose={handleClose}
+            >
+              {sets.map((setName) => 
+                <MenuItem 
+                  id={setName} 
+                  onClick={choose}>
+                    {setName}
+                  </MenuItem>)}
+            </Menu>
+            <Button 
+              onClick={reset}
+              className="button">
+                Reset
+              </Button>
+            <Button 
+              onClick={handleUploadOpen} 
+              className="button">
+                Add Set
+              </Button>
+            <Button 
+              onClick={handleRemoveOpen} 
+              className="button">
+                Remove Set
+              </Button>
+            <div className="joingame">
+              { name === "" ? 
+              <Button 
+                onClick={handleJoinOpen}>
+                <Typography variant="h5">
+                  Join Game
+                </Typography>
+              </Button> : 
+             <>
+                <Typography variant="h6">
+                  {`${name} vs ${(opponent === "") ? "Waiting on opponent" : opponent}`}
+                </Typography>
+                <IconButton />
+              </>
+                }
+            </div>
+      </Container>
     )
   }
-}

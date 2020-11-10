@@ -1,84 +1,74 @@
-import React, { Component } from 'react';
-import './App.css';
+import React from 'react';
+import './styles/App.css';
 import AppHeader from './Header';
 import GameBoard from './GameBoard';
 import CurrentCard from './CurrentCard';
-import { Grid, Segment, Loader } from 'semantic-ui-react';
+import { fetchImages, postSet, getGameStatus, resetGame } from './utils/Api'
 
+let pollTimer = null;
 
-const REFRESH_EVERY_MS = 1000;
+function App() {
 
-class App extends Component {
-  constructor() {
-    super();
-    this.state = {
-      setChosen: "",
-      gameId: 100
+  const [charList, updateCharList] = React.useState([]);
+  const [set, updateSet] = React.useState("");
+  const [gameId, updateGameId] = React.useState(-1);
+  const [name, updateName] = React.useState("");
+  const [opponent, updateOpponent] = React.useState("");
+  const [char, updateChar] = React.useState("");
+  const [isPlayerOne, updateIsPlayerOne] = React.useState(false);
+
+  //Resets current character, gameboard, removes setChosen from backend
+  function reset() {
+    resetGame(gameId);
+    updateCharList([]);
+    updateChar("");
+  }
+
+  //Fetches list of images on change of set
+  React.useEffect(() => {
+    if (set === "") {
+      updateChar("");
+      updateCharList([]);
     }
+    fetchImages(gameId, isPlayerOne, updateCharList, updateChar);
+  }, [set, gameId, isPlayerOne]);
 
-    this.refreshInterval = setInterval(
-      this.isChoiceMade,
-      REFRESH_EVERY_MS
-    );
-
-    this.isChoiceMade();
-  }
-
-  setGameId = (i) => {
-    this.setState({
-      gameId: i
-    });
-
-  }
-
-  isChoiceMade = async e => {
-    if (this.state.gameId === 100) {
-      return;
-    } else {
-      var req = {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id: this.state.gameId })
-      };
-
-      await fetch(process.env.REACT_APP_API + '/getImages/getChoice', req)
-        .then(res => res.text())
-          .then(res => {
-            if (JSON.parse(res).setChosen !== this.state.setChosen) {
-              this.setState({ setChosen: JSON.parse(res).setChosen })
-            }
-            })
-          .catch(err => console.log(err));
+  //Updates status of the game on change to gameId
+  //Then poll for opponent if neccessary
+  React.useEffect(() => {
+    console.log(gameId);
+    if (gameId !== -1) {
+      pollTimer = setInterval(() => {
+        getGameStatus(gameId, isPlayerOne, updateName, updateOpponent, updateChar, updateSet);
+      }, 1000);
     }
-  }
+    return () => clearInterval(pollTimer);
+  }, [gameId, isPlayerOne,]); 
 
-  render() {
     return (
       <>
         <AppHeader
-          setGameId={this.setGameId}/>
-        {this.state.setChosen && (
-        <Grid>
-          <Grid.Row>
-            <Grid.Column width={14}>
-              <GameBoard
-                set={this.state.setChosen}
-                gameId={this.state.gameId}/>
-            </Grid.Column>
-            <Grid.Column width={2}>
-              <CurrentCard
-                set={this.state.setChosen}/>
-            </Grid.Column>
-          </Grid.Row>
-        </Grid>
-      )}  { !this.state.setChosen && (
-        <Segment>
-           <Loader active inline='centered'>Choose Your Character Set</Loader>
-        </Segment>
-      )}
+          updateGameId={updateGameId}
+          updateName={updateName}
+          updateOpponent={updateOpponent}
+          updateSet={updateSet}
+          updateIsPlayerOne={updateIsPlayerOne}
+          gameId={gameId}
+          name={name}
+          opponent={opponent}
+          set={set}
+          reset={reset}
+          />
+        <div className="board">
+          {charList === [] ? <div/> : (<GameBoard
+            charList={charList}/>)}
+        </div>
+        <div className="current">
+          {char === "" ? <div/> : (<CurrentCard
+            char={char}/>)}
+        </div>
       </>
     )
   }
-}
 
 export default App;
