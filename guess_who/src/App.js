@@ -3,7 +3,7 @@ import './styles/App.css';
 import AppHeader from './Header';
 import GameBoard from './GameBoard';
 import CurrentCard from './CurrentCard';
-import { fetchImages, postSet, getGameStatus, resetGame } from './utils/Api'
+import { fetchImages, getGameStatus, resetGame } from './utils/Api'
 
 let pollTimer = null;
 
