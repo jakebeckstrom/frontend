@@ -4,6 +4,7 @@ import AppHeader from './Header';
 import GameBoard from './GameBoard';
 import CurrentCard from './CurrentCard';
 import { fetchImages, getGameStatus, resetGame } from './utils/Api'
+import Chat from './Chat';
 
 let pollTimer = null;
 
@@ -64,8 +65,13 @@ function App() {
             charList={charList}/>)}
         </div>
         <div className="current">
-          {char === "" ? <div/> : (<CurrentCard
-            char={char}/>)}
+          {char === "" ? <div/> 
+            : (
+              <div>
+              <CurrentCard char={char}/>
+            </div>
+            )}
+            <Chat name={name} opponent={opponent} isPlayerOne={isPlayerOne} />
         </div>
       </>
     )
