@@ -4,7 +4,7 @@ import Paper from '@material-ui/core/Paper';
 import Grid from '@material-ui/core/Grid';
 import ButtonBase from '@material-ui/core/ButtonBase';
 
-const AWSHOST = 'http://guess-who-static-files.s3.amazonaws.com/';
+const AWSHOST = 'https://guess-who-static-files.s3.amazonaws.com/';
 
 const useStyles = makeStyles((theme) => ({
     root: {
