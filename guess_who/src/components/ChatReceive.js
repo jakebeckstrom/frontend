@@ -1,9 +1,9 @@
 import React from 'react';
 import { Container, Typography, Button, Paper, CircularProgress } from '@material-ui/core';
 
-export default function ChatReceive() {
+export default function ChatReceive({question, answerYes, answerNo}) {
 
-    const [question, updateQuestion] = React.useState("");
+    // const [question, updateQuestion] = React.useState("");
 
     return(
         <Container className="chatitem">
@@ -12,11 +12,15 @@ export default function ChatReceive() {
                 {question ? <p>{question}</p> : <CircularProgress size="20px" /> }
             </Paper>
             <Button
-                variant="contained">
+                variant="contained"
+                onClick={answerYes}
+                disabled={question === ""}>
                 Yes
             </Button>
             <Button
-                variant="contained">
+                variant="contained"
+                onClick={answerNo}
+                disabled={question === ""}>
                 No
             </Button>
         </Container>

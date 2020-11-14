@@ -69,9 +69,9 @@ function App() {
             : (
               <div>
               <CurrentCard char={char}/>
+              <Chat name={name} opponent={opponent} isPlayerOne={isPlayerOne} set={set} />
             </div>
             )}
-            <Chat name={name} opponent={opponent} isPlayerOne={isPlayerOne} />
         </div>
       </>
     )

@@ -93,6 +93,14 @@
   margin: 5px;
 }
 
+.me {
+  color: blue;
+}
+
+.them {
+  color: red;
+}
+
 @keyframes App-logo-spin {
   from {
     transform: rotate(0deg);

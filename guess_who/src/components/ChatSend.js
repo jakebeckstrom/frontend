@@ -1,7 +1,7 @@
 import { Button, Container, TextField, Typography } from '@material-ui/core';
 import React from 'react';
 
-export default function ChatSend() {
+export default function ChatSend({onQuestionChange, onSendClick, question}) {
     
     return(
         <Container className="chatitem">
@@ -10,9 +10,12 @@ export default function ChatSend() {
                 variant="outlined"
                 size="small"
                 label="Question"
+                onChange={e => onQuestionChange(e.currentTarget.value)}
                 />
             <Button
-                variant="contained">
+                variant="contained"
+                disabled={question === ""}
+                onClick={onSendClick}>
                 Send
             </Button>
         </Container>
