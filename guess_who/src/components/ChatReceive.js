@@ -3,8 +3,6 @@ import { Container, Typography, Button, Paper, CircularProgress } from '@materia
 
 export default function ChatReceive({question, answerYes, answerNo}) {
 
-    // const [question, updateQuestion] = React.useState("");
-
     return(
         <Container className="chatitem">
             <Typography variant="h6">Their Question</Typography>

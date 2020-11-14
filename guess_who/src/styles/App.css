@@ -83,12 +83,10 @@
 
 .chatbox {
   border: 2px solid #282c34;
-  background-color: wheat;
 }
 
 .chatitem {
   width: 90%;
-  background-color: brown;
   padding: 5px;
   margin: 5px;
 }
