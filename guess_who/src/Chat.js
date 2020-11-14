@@ -1,15 +1,74 @@
-import { Container, Typography } from '@material-ui/core';
+import { Container, List, Typography } from '@material-ui/core';
 import React from 'react';
 import './styles/App.css';
 import ChatSend from './components/ChatSend';
 import ChatRecieve from './components/ChatReceive';
 import OldChat from './components/OldChat'
 
-const message = {
-    player: "bean",
-    question: "Is it red?",
-    answer: "Yes"
-}
+const messages = [
+    {
+        player: "bean",
+        question: "Is it red?",
+        answer: "Yes"
+    }, {
+        player: "bean",
+        question: "Is it red?",
+        answer: "Yes"
+    }, {
+        player: "bean",
+        question: "Is it red?",
+        answer: "Yes"
+    }, {
+        player: "bean",
+        question: "Is it red?",
+        answer: "Yes"
+    }, {
+        player: "bean",
+        question: "Is it red?",
+        answer: "Yes"
+    }, {
+        player: "bean",
+        question: "Is it red?",
+        answer: "Yes"
+    }, {
+        player: "bean",
+        question: "Is it red?",
+        answer: "Yes"
+    }, {
+        player: "bean",
+        question: "Is it red?",
+        answer: "Yes"
+    }, {
+        player: "bean",
+        question: "Is it red?",
+        answer: "Yes"
+    }, {
+        player: "bean",
+        question: "Is it red?",
+        answer: "Yes"
+    }, {
+        player: "bean",
+        question: "Is it red?",
+        answer: "Yes"
+    }, {
+        player: "bean",
+        question: "Is it red?",
+        answer: "Yes"
+    }, {
+        player: "bean",
+        question: "Is it red?",
+        answer: "Yes"
+    }, {
+        player: "bean",
+        question: "Is it red?",
+        answer: "Yes"
+    }, {
+        player: "bean",
+        question: "Is it red?",
+        answer: "Yes"
+    }
+
+]
 
 export default function Chat({name, opponent, isPlayerOne}) {
 
@@ -21,7 +80,10 @@ export default function Chat({name, opponent, isPlayerOne}) {
             <Typography>
                 Chat
             </Typography>
-            <OldChat message={message}/>
+            <List>
+                {messages.map((i) => <OldChat message={i} />)}
+            </List>
+            {/* <OldChat message={message}/> */}
             <ChatSend/>
             <ChatRecieve/>
         </Container>
