@@ -16,3 +16,8 @@ Built Using React and Material UI.
 
 2. Run `npm install` to install all dependencies.
 3. Run `npm start` to start up the frontend.
+
+
+Known issues:
+ - Chat currently broadcasts to all players, not just players in the game
+ - Intermittently, a player will get stuck in the player list
