@@ -1,15 +1,14 @@
-import React from 'react';
-import './styles/App.css';
-import AppHeader from './Header';
-import GameBoard from './GameBoard';
-import CurrentCard from './CurrentCard';
-import { fetchImages, getGameStatus, resetGame } from './utils/Api'
-import Chat from './Chat';
+import React from "react";
+import "./styles/App.css";
+import AppHeader from "./Header";
+import GameBoard from "./GameBoard";
+import CurrentCard from "./CurrentCard";
+import { fetchImages, getGameStatus, resetGame, test } from "./utils/Api";
+import Chat from "./Chat";
 
 let pollTimer = null;
 
 function App() {
-
   const [charList, updateCharList] = React.useState([]);
   const [set, updateSet] = React.useState("");
   const [gameId, updateGameId] = React.useState(-1);
@@ -24,6 +23,10 @@ function App() {
     updateCharList([]);
     updateChar("");
   }
+
+  React.useEffect(() => {
+    test();
+  });
 
   //Fetches list of images on change of set
   React.useEffect(() => {
@@ -40,41 +43,53 @@ function App() {
     console.log(gameId);
     if (gameId !== -1) {
       pollTimer = setInterval(() => {
-        getGameStatus(gameId, isPlayerOne, updateName, updateOpponent, updateChar, updateSet);
+        getGameStatus(
+          gameId,
+          isPlayerOne,
+          updateName,
+          updateOpponent,
+          updateChar,
+          updateSet
+        );
       }, 1000);
     }
     return () => clearInterval(pollTimer);
-  }, [gameId, isPlayerOne,]); 
+  }, [gameId, isPlayerOne]);
 
-    return (
-      <>
-        <AppHeader
-          updateGameId={updateGameId}
-          updateName={updateName}
-          updateOpponent={updateOpponent}
-          updateSet={updateSet}
-          updateIsPlayerOne={updateIsPlayerOne}
-          gameId={gameId}
-          name={name}
-          opponent={opponent}
-          set={set}
-          reset={reset}
-          />
-        <div className="board">
-          {charList === [] ? <div/> : (<GameBoard
-            charList={charList}/>)}
-        </div>
-        <div className="current">
-          {char === "" ? <div/> 
-            : (
-              <div>
-              <CurrentCard char={char}/>
-              <Chat name={name} opponent={opponent} isPlayerOne={isPlayerOne} set={set} />
-            </div>
-            )}
-        </div>
-      </>
-    )
-  }
+  return (
+    <>
+      <AppHeader
+        updateGameId={updateGameId}
+        updateName={updateName}
+        updateOpponent={updateOpponent}
+        updateSet={updateSet}
+        updateIsPlayerOne={updateIsPlayerOne}
+        gameId={gameId}
+        name={name}
+        opponent={opponent}
+        set={set}
+        reset={reset}
+      />
+      <div className="board">
+        {charList === [] ? <div /> : <GameBoard charList={charList} />}
+      </div>
+      <div className="current">
+        {char === "" ? (
+          <div />
+        ) : (
+          <div>
+            <CurrentCard char={char} />
+            <Chat
+              name={name}
+              opponent={opponent}
+              isPlayerOne={isPlayerOne}
+              set={set}
+            />
+          </div>
+        )}
+      </div>
+    </>
+  );
+}
 
 export default App;
