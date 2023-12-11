@@ -26,7 +26,7 @@ function App() {
 
   React.useEffect(() => {
     test();
-  });
+  }, []);
 
   //Fetches list of images on change of set
   React.useEffect(() => {
