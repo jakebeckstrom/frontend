@@ -25,6 +25,7 @@ function App() {
   }
 
   React.useEffect(() => {
+    console.log("testing api");
     test();
   }, []);
 
