@@ -160,7 +160,6 @@ export async function test() {
     method: "GET",
     headers: { "Content-Type": "application/json" },
   };
-  fetch(process.env.REACT_APP_API + "/testAPI", req).then((res) =>
-    console.log(res.json())
-  );
+  const res = await fetch(process.env.REACT_APP_API + "/testAPI", req);
+  console.log(res.json());
 }
